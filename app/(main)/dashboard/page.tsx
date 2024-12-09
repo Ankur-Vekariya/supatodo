@@ -1,8 +1,10 @@
 "use client";
+import TaskCard from "@/components/TaskCard";
+import { taskContext } from "@/context/taskContext";
 import withLogging from "@/HOC/withProtectedRoute";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 // TypeScript interface for Task data
 interface Task {
@@ -14,8 +16,8 @@ interface Task {
 
 function Dashboard() {
   const router = useRouter();
+  const { task, setTask } = useContext(taskContext);
 
-  const [task, setTask] = useState("");
   const [taskList, setTaskList] = useState<Task[]>([]);
 
   const signOut = async () => {
@@ -51,7 +53,7 @@ function Dashboard() {
     }
 
     setTask("");
-    getTask(); // Refresh task list after successful creation
+    getTask();
   };
 
   const getTask = async () => {
@@ -118,40 +120,19 @@ function Dashboard() {
           Add
         </button>
       </div>
-      {taskList.length > 0 &&
-        taskList.map((item, index) => {
-          return (
-            <div
-              className="max-w-sm rounded overflow-hidden shadow-lg"
-              key={index}
-            >
-              <div className="px-6 py-4 flex flex-row justify-between align-middle content-center">
-                <input
-                  type="checkbox"
-                  className="checkbox"
-                  // checked={item.is_complete}
-                  defaultChecked={item.is_complete}
-                  onChange={(e) => {
-                    console.log(e.target.checked);
-                    if (e.target.checked) {
-                      updateTask(item.id);
-                    }
-                  }}
-                />
-                <p className="text-gray-700 text-base align-middle items-center self-center">
-                  {item?.task}
-                </p>
-                <button
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                  type="button"
-                  onClick={() => deleteTask(item.id)}
-                >
-                  remove
-                </button>
-              </div>
-            </div>
-          );
-        })}
+      <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {taskList.length > 0 &&
+          taskList.map((item, index) => {
+            return (
+              <TaskCard
+                item={item}
+                key={index}
+                updateTask={updateTask}
+                deleteTask={deleteTask}
+              />
+            );
+          })}
+      </div>
     </div>
   );
 }
