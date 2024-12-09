@@ -20,7 +20,6 @@ function SignIn() {
     });
     if (!error) {
       router.push("/sign-in");
-      alert("error--------------");
     }
   }
   return (
@@ -59,13 +58,13 @@ function SignIn() {
             type="button"
             onClick={() => signIn({ email: email, password: password })}
           >
-            Sign In
+            Sign Up
           </button>
           <a
             className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
-            href="#"
+            href="/sign-in"
           >
-            Forgot Password?
+            Sign in
           </a>
         </div>
       </form>

@@ -20,7 +20,6 @@ function SignIn() {
     });
     if (!error) {
       router.push("/dashboard");
-      alert("error--------------");
     }
   }
   return (
@@ -63,9 +62,9 @@ function SignIn() {
           </button>
           <a
             className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
-            href="#"
+            href="/sign-up"
           >
-            Forgot Password?
+            Sign up
           </a>
         </div>
       </form>
