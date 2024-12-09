@@ -3,8 +3,8 @@ import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
-const withLogging = (WrappedComponent: React.ReactNode) => {
-  return (props) => {
+const withLogging = (WrappedComponent: React.ComponentType) => {
+  return () => {
     const [session, setSession] = useState("");
     const router = useRouter();
 
@@ -28,7 +28,7 @@ const withLogging = (WrappedComponent: React.ReactNode) => {
       getSession();
     }, [router]);
 
-    return session ? <WrappedComponent {...props} /> : null;
+    return session ? <WrappedComponent /> : null;
   };
 };
 
