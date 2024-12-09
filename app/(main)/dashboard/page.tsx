@@ -4,11 +4,19 @@ import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
+// TypeScript interface for Task data
+interface Task {
+  id: string;
+  task: string;
+  is_complete: boolean;
+  user_id?: string;
+}
+
 function Dashboard() {
   const router = useRouter();
 
   const [task, setTask] = useState("");
-  const [taskList, setTaskList] = useState([]);
+  const [taskList, setTaskList] = useState<Task[]>([]);
 
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
@@ -19,29 +27,41 @@ function Dashboard() {
   };
 
   const addTask = async () => {
+    if (!task.trim()) {
+      alert("Please enter a task!");
+      return;
+    }
+
     const {
       data: { user },
+      error,
     } = await supabase.auth.getUser();
-    console.log("user---", user);
-    const { error } = await supabase
-      .from("todos")
-      .insert({ task: task, is_complete: false, user_id: user?.id });
-
     if (error) {
-      console.log("error creating task---------", error);
-    } else {
-      setTask("");
-      getTask();
+      console.error("Error getting user:", error);
+      return;
     }
+
+    const { error: insertError } = await supabase
+      .from("todos")
+      .insert({ task, is_complete: false, user_id: user?.id });
+
+    if (insertError) {
+      console.error("Error creating task:", insertError);
+      return;
+    }
+
+    setTask("");
+    getTask(); // Refresh task list after successful creation
   };
 
   const getTask = async () => {
     const { data, error } = await supabase.from("todos").select();
     if (error) {
-      console.log("get data error---------", error);
+      console.error("Error getting tasks:", error);
+      return;
     }
-    console.log("data", data);
-    setTaskList(data);
+
+    setTaskList(data || []);
   };
 
   const updateTask = async (id: string) => {
@@ -51,16 +71,16 @@ function Dashboard() {
       .eq("id", id);
 
     if (error) {
-      alert("error to update task");
+      alert("Error to update task");
     }
   };
 
   const deleteTask = async (id: string) => {
     const response = await supabase.from("todos").delete().eq("id", id);
     console.log(response);
-    getTask();
+    getTask(); // Refresh task list after deletion
     if (response.error) {
-      alert("error to delete task");
+      alert("Error to delete task");
     }
   };
 
