@@ -1,9 +1,8 @@
 "use client";
 import withLogging from "@/HOC/withProtectedRoute";
-import withProtectedRoute from "@/HOC/withProtectedRoute";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 function Dashboard() {
   const router = useRouter();
@@ -11,6 +10,9 @@ function Dashboard() {
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
     router.push("/sign-in");
+    if (error) {
+      alert("sign out error");
+    }
   };
 
   return (
